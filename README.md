@@ -42,7 +42,7 @@ Many RTOSes provide dynamic memory allocation functionality, but these functions
 
 A block of memory needs to be initially assigned using the `malloc_addblock()` function. This tells the `malloc` implementation what memory address and size to use for the heap.
 
-```
+```c
 // Allocate 4MB to the heap starting at memory address 0xDEADBEEF
 malloc_addblock(0xDEADBEEF, 4 * 1024 * 1024);
 ```
@@ -81,13 +81,13 @@ This project stores some files using [`git-lfs`](https://git-lfs.github.com).
 
 To install `git-lfs` on Linux:
 
-```
+```sh
 sudo apt install git-lfs
 ```
 
 To install `git-lfs` on OS X:
 
-```
+```sh
 brew install git-lfs
 ```
 
@@ -99,25 +99,25 @@ The [Meson](https://mesonbuild.com) build system depends on `python3` and `ninja
 
 To install on Linux:
 
-```
+```sh
 sudo apt-get install python3 python3-pip ninja-build
 ```
 
 To install on OSX:
 
-```
+```sh
 brew install python3 ninja
 ```
 
 Meson can be installed through `pip3`:
 
-```
+```sh
 pip3 install meson
 ```
 
 If you want to install Meson globally on Linux, use:
 
-```
+```sh
 sudo -H pip3 install meson
 ```
 
@@ -127,13 +127,13 @@ This project uses [`git-lfs`](https://git-lfs.github.com), so please install it 
 
 This project is [hosted on GitHub](https://github.com/embeddedartistry/libmemory). You can clone the project directly using this command:
 
-```
+```sh
 git clone --recursive git@github.com:embeddedartistry/libmemory.git
 ```
 
 If you don't clone recursively, be sure to run the following command in the repository or your build will fail:
 
-```
+```sh
 git submodule update --init
 ```
 
@@ -141,7 +141,7 @@ git submodule update --init
 
 If Make is installed, the library can be built by issuing the following command:
 
-```
+```sh
 make
 ```
 
@@ -149,13 +149,13 @@ This will build all targets for your current architecture.
 
 You can clean builds using:
 
-```
+```sh
 make clean
 ```
 
 You can eliminate the generated `buildresults` folder using:
 
-```
+```sh
 make distclean
 ```
 
@@ -163,13 +163,13 @@ You can also use  `meson` directly for compiling.
 
 Create a build output folder:
 
-```
+```sh
 meson buildresults
 ```
 
 And build all targets by running
 
-```
+```sh
 ninja -C buildresults
 ```
 
@@ -177,7 +177,7 @@ Cross-compilation is handled using `meson` cross files. Example files are includ
 
 Cross-compilation must be configured using the meson command when creating the build output folder. For example:
 
-```
+```sh
 meson buildresults --cross-file build/cross/gcc_arm_cortex-m4.txt
 ```
 
@@ -197,19 +197,19 @@ If you don't use `meson` for your project, the best method to use this project i
 
 Example linker flags:
 
-```
+```sh
 -Lpath/to/libmemory_freelist.a -lmemory_freelist
 ```
 
 If you're using `meson`, you can use `libmemory` as a subproject. Place it into your subproject directory of choice and add a `subproject` statement:
 
-```
+```meson
 libmemory = subproject('libmemory')
 ```
 
 You will need to promote the subproject dependencies to your project in order to use them in your build targets:
 
-```
+```meson
 libmemory = subproject('libmemory')
 
 libmemory_native_dep = libmemory.get_variable('libmemory_native_dep')
@@ -223,7 +223,7 @@ libmemory_framework_rtos_dep = libmemory.get_variable('libmemory_framework_rtos_
 
 You can use the dependency for your target library configuration in your `executable` declarations(s) or other dependencies. For example:
 
-```
+```meson
 fwdemo_sim_platform_dep = declare_dependency(
 	include_directories: fwdemo_sim_platform_inc,
 	dependencies: [
@@ -252,13 +252,13 @@ The following meson project options can be set for this library when creating th
 
 Options can be specified using `-D` and the option name:
 
-```
+```sh
 meson buildresults -Denable-pedantic=true
 ```
 
 The same style works with `meson configure`:
 
-```
+```sh
 cd buildresults
 meson configure -Denable-pedantic=true
 ```
@@ -304,14 +304,14 @@ In addition, every library variant has a corresponding `_native` target. When cr
 
 A block of memory needs to be initially assigned using the `malloc_addblock()` function:
 
-```
+```c
 void malloc_addblock(void* addr, size_t size);
 ```
 
 
 This tells the `malloc` implementation what memory address and size to use for the heap.
 
-```
+```c
 // Allocate 4MB to the heap starting at memory address 0xDEADBEEF
 malloc_addblock(0xDEADBEEF, 4 * 1024 * 1024);
 ```
@@ -322,18 +322,18 @@ Multiple blocks of memory can be added using `malloc_addblock()`. The memory blo
 
 ### Thread Safety
 
-RTOS-based implementations are thread-safe depending on the RTOS and heap configuration.
+RTOS-based implementations may or may not be thread-safe depending on the RTOS and heap configuration.
 
 The freelist implementation is not thread-safe by default. If you are using this version on a threaded system, you need to define two functions within your program:
 
-```
+```c
 void malloc_lock();
 void malloc_unlock();
 ```
 
 These should lock and unlock a mutex that is designed to protect `malloc`.
 
-```
+```c
 mutex_t malloc_mutex;
 
 void malloc_lock() 
@@ -353,7 +353,7 @@ These functions are defined as weakly linked in the library, so the default no-o
 
 You can allocate aligned memory using `aligned_malloc()`:
 
-```
+```c
 void* aligned_malloc(size_t align, size_t size);
 ```
 
@@ -361,7 +361,7 @@ Alignment must be a power of two!
 
 Aligned memory can only be free'd using `aligned_free()`:
 
-```
+```c
 void aligned_free(void* ptr);
 ```
 
@@ -384,7 +384,7 @@ NOTE: External libc dependencies are only used for building the library. They ar
 
 The tests for this library are written with CMocka, which is included as a subproject and does not need to be installed on your system. You can run the tests by issuing the following command:
 
-```
+```sh
 make test
 ```
 
@@ -396,7 +396,7 @@ By default, test results are generated for use by the CI server and are formatte
 
 Documentation can be built locally by running the following command:
 
-```
+```sh
 make docs
 ```
 
