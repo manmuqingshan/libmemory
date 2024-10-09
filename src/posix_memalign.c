@@ -3,7 +3,7 @@
 #include <errno.h>
 #include <stddef.h>
 
-#define IS_POWER_2(x) (!((x) & ((x)-1)))
+#define IS_POWER_2(x) (!((x) & ((x) - 1)))
 
 int posix_memalign(void** __memptr, size_t __alignment, size_t __size)
 {
