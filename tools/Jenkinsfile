@@ -133,7 +133,6 @@ pipeline
         enabledForFailure: true,
         healthy: 5,
         unhealthy: 10,
-        referenceJobName: 'ea-nightly/libmemory/master',
         sourceDirectory: 'buildresults',
         qualityGates: [
           // 3 new issue: unstable
