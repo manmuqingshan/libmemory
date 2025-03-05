@@ -134,7 +134,6 @@ pipeline
     aborted
     {
       echo "Build manually aborted on Jenkins"
-      slackNotify('ABORTED')
       setGithubStatus('continuous-integration/jenkins/libmemory', 'libmemory CI Build Aborted', 'ERROR')
       //reportciCancel()
     }
